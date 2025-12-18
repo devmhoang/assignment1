@@ -2,32 +2,111 @@ package demo.backend.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import demo.backend.model.Order;
+import demo.backend.model.User;
+import demo.backend.security.JwtUtil;
+import demo.backend.service.OrderService;
+import demo.backend.service.UserService;
+
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+// import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/order")
 public class RestOrder {
 
+     @Autowired
+     JwtUtil jwtUtil;
+
+     private OrderService orderService;
+     private UserService userService;
+     private ObjectMapper objectMapper;
+
+     public RestOrder(
+               OrderService theOrderService,
+               UserService theUserService,
+               ObjectMapper theObjectMapper) {
+          orderService = theOrderService;
+          userService = theUserService;
+          objectMapper = theObjectMapper;
+     }
+
      // HANDLE NEW ORDER SUBMISSION
-     @PostMapping("path")
-     public String postMethodName(@RequestBody String entity) {
-         //TODO: process POST request
+     @PostMapping("/create")
+     public ResponseEntity<?> createOrder(
+               @CookieValue(value = "accessJwt", required = false) String accessCookie,
+               @RequestBody Order newOrder) {
+          // New Order by Anon
+          if (accessCookie == null || accessCookie.isBlank()) {
+               Order submitOrder = orderService.create(newOrder, null);
+               return ResponseEntity.ok(Map.of("message", submitOrder));
+          }
 
+          // jwt validation
+          if (!jwtUtil.validateJwtToken(accessCookie)) {
+               return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                         .body(Map.of("message", "Jwt invalid or expired --01"));
+          }
 
-         //TODO: DEDUCT STOCK
-         
-         return entity;
+          String usernameFromJwt = jwtUtil.getUsernameFromJwtToken(accessCookie);
+          Optional<User> jwtUser = userService.findByUsername(usernameFromJwt);
+          if (!jwtUser.isPresent()) {
+               orderService.create(newOrder, null);
+               return ResponseEntity.ok(Map.of("message", "order created but no jwtUser found--01"));
+          }
+
+          // New Order by User
+          User foundUser = jwtUser.get();
+          Order submiteOrder = orderService.create(newOrder, foundUser.getId());
+
+          // TODO: DEDUCT STOCK to product table
+          // read order items
+
+          return ResponseEntity.ok(Map.of("message", "order created: " + submiteOrder));
      }
 
      // VIEW ORDERS FOR AUTHENTICATED USER
-     @PostMapping("path")
-     public String postMethodName(@RequestBody String entity) {
-         //TODO: process POST request
-         
-         return entity;
+     @PostMapping("/view")
+     public ResponseEntity<?> viewHistory(
+               @CookieValue(value = "accessJwt", required = false) String accessCookie) {
+          if (accessCookie == null || accessCookie.isBlank()) {
+               return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                         .body(Map.of("message", "Jwt empty --02"));
+          }
+
+          // JWT VALIDATION
+          if (!jwtUtil.validateJwtToken(accessCookie)) {
+               return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                         .body(Map.of("message", "Jwt invalid or expired --03"));
+          }
+          String usernameFromJwt = jwtUtil.getUsernameFromJwtToken(accessCookie);
+          Optional<User> jwtUser = userService.findByUsername(usernameFromJwt);
+          if (!jwtUser.isPresent()) {
+               return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                         .body(Map.of("message", "Jwt user not found --04"));
+          }
+          User foundUser = jwtUser.get();
+          return ResponseEntity.ok(Map.of("message", orderService.findOrdersByCustomerId(foundUser.getId())));
      }
-     
+
+     // VIEW ORDERS FOR ADMIN
+     @GetMapping("/viewall")
+     public ResponseEntity<?> viewAll(@RequestParam String param) {
+          return ResponseEntity.ok(Map.of("message", "order list for admin"));
+     }
      
 }

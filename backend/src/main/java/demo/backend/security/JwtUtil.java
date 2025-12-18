@@ -39,32 +39,7 @@ public class JwtUtil {
         .compact();
   }
 
-  public String generateAccessJwt(String username) { // for refresh1 endpoint
-    return Jwts.builder()
-        .subject(username)
-        .issuedAt(new Date())
-        .expiration(new Date((new Date()).getTime() + jwtAccessMs))
-        .signWith(key(), Jwts.SIG.HS256)
-        .compact();
-  }
-
-  public String generateRefreshJwt(Authentication auth) {
-    UserDetailsImpl userPrinciple = (UserDetailsImpl) auth.getPrincipal();
-    return Jwts.builder()
-        .subject(userPrinciple.getUsername())
-        .issuedAt(new Date())
-        .expiration(new Date((new Date()).getTime() + jwtRefreshMs))
-        .signWith(key(), Jwts.SIG.HS256)
-        .compact();
-  }
-  public String generateRefreshJwt(String username) {
-    return Jwts.builder()
-      .subject(username)
-      .issuedAt(new Date())
-      .expiration(new Date((new Date()).getTime() + jwtRefreshMs))
-      .signWith(key(), Jwts.SIG.HS256)
-      .compact();
-  }
+  
 
   private SecretKey key() {
     return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
