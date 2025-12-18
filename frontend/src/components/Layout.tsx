@@ -9,7 +9,7 @@ export const Layout = () => {
           <>
                <Header/>
 
-               <div className="bg-gray-900 text-white h-120 w-140 p-10">
+               <div className="bg-gray-900 text-white h-120 w-200 p-10">
                     <Outlet />
                </div>
 

@@ -37,7 +37,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     String path = request.getRequestURI();
     // for public endpoints
     if (path.equals("/api/user/login") || path.equals("/api/user/signup") || path.equals("/api/product/view")
-        || path.startsWith("/admin") || path.equals("/api/ping")) {
+        || path.startsWith("/admin") || path.equals("/api/ping") || path.equals("/api/product/view")) {
       logger.info("Bypassing JWT filter for public endpoint: {}", path);
       filterChain.doFilter(request, response);
       return;
