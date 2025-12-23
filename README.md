@@ -63,8 +63,11 @@ Frontend: `cd ./frontend && npm i && npm run dev`
 # Default Credentials
 **Admin Account:**
 - Password: `abc123`
+
+
 **User Accounts:**
 sarah_jones (password: abc123)
+
 david_brown (password: abc123)
 
 
