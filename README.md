@@ -2,6 +2,7 @@
 proof of concept submission - Tran Minh Hoang
 
 [FRONTEND - React/Node.js 22](https://localhost:5173/)
+
 [BACKEND - Springboot 3.5.8 Java 21 Maven 3.9.9 ](https://localhost:8011)
 
 # Business Logic Design
@@ -61,11 +62,9 @@ Frontend: `cd ./frontend && npm i && npm run dev`
 - For JWT Authentication, Backend uses localhost.p12 for local SSL certification, Frontend uses Mkcert plugin to both facilitate HTTPS as required by Chrome/Firefox. This enables HttpOnly Cookie JWT, to limit access from client and only handled between browsers and Springboot.
 
 # Default Credentials
-**Admin Account:**
-- Password: `abc123`
+Admin Account: Password: `abc123`
 
-
-**User Accounts:**
+User Accounts:
 sarah_jones (password: abc123)
 
 david_brown (password: abc123)
