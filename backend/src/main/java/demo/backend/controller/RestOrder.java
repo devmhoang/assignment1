@@ -3,11 +3,11 @@ package demo.backend.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import demo.backend.config.JwtUtil;
 import demo.backend.model.Order;
 import demo.backend.model.OrderItem;
 import demo.backend.model.Product;
 import demo.backend.model.User;
-import demo.backend.security.JwtUtil;
 import demo.backend.service.OrderService;
 import demo.backend.service.ProductService;
 import demo.backend.service.UserService;

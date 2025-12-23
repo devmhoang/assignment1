@@ -21,7 +21,7 @@ public class RedisService {
       MessageDigest digest = MessageDigest.getInstance("SHA-256");
       byte[] hash = digest.digest(jwt.getBytes(StandardCharsets.UTF_8));
       String hashedToken = HexFormat.of().formatHex(hash);
-      redis.opsForValue().set("blacklist8c:" + hashedToken, "blacklisted", expSeconds, TimeUnit.SECONDS);
+      redis.opsForValue().set("blacklist:" + hashedToken, "blacklisted", expSeconds, TimeUnit.SECONDS);
     } catch (NoSuchAlgorithmException e) {
       e.printStackTrace(); // show what's REALLY happening
       throw new RuntimeException("SHA-256 not supported!-01", e);
@@ -33,18 +33,11 @@ public class RedisService {
       MessageDigest digest = MessageDigest.getInstance("SHA-256");
       byte[] hash = digest.digest(jwt.getBytes(StandardCharsets.UTF_8));
       String hashedToken = HexFormat.of().formatHex(hash);
-      return redis.hasKey("blacklist8c:" + hashedToken);
+      return redis.hasKey("blacklist:" + hashedToken);
     } catch (NoSuchAlgorithmException e) {
       e.printStackTrace();
       throw new RuntimeException("SHA-256 not supported!-02");
     }
   }
 
-  public boolean allow(String ip) {// rateLimiting 1 req per sec per IP
-    Long count = redis.opsForValue().increment("rate.. " + ip);
-    redis.expire("rate..: " + ip, 1, TimeUnit.SECONDS);
-    return count != null && count <= 1;
-    // usage: boolan locked = redis.opsForValue().setIfAbsent("lock:user:123", "1",
-    // 5, TimeUnit.SECONDS);
-  }
 }

@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import demo.backend.config.JwtUtil;
 import demo.backend.model.User;
-import demo.backend.security.JwtUtil;
 import demo.backend.service.RedisService;
 import demo.backend.service.UserDetailsImpl;
 import demo.backend.service.UserService;
@@ -97,7 +97,7 @@ public class RestUser {
                          .httpOnly(true)
                          .secure(httpSecure) // true for HTTPS production
                          .path("/")
-                         .maxAge(10 * 60)
+                         .maxAge(5 * 60)
                          .sameSite("None")
                          .build();
                res.addHeader("Set-Cookie", responseAccessCookie.toString());
@@ -185,7 +185,7 @@ public class RestUser {
                     .httpOnly(true)
                     .secure(httpSecure)
                     .path("/")
-                    .maxAge(10 * 60)
+                    .maxAge(5 * 60)
                     .sameSite("None")
                     .build();
           res.addHeader("Set-Cookie", responseAccessCookie.toString());

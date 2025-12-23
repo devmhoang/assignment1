@@ -2,7 +2,7 @@ package demo.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+// import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
 public class BackendApplication {
@@ -13,7 +13,6 @@ public class BackendApplication {
 		// BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		// String plainPassword = "abc123";
 		// String hashedPassword = encoder.encode(plainPassword);
-		// System.out.println("Plain password: " + plainPassword);
 		// System.out.println("Hashed password: " + hashedPassword);
 
 		System.out.println("~~~ backend online ~~~");

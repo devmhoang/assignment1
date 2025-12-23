@@ -50,14 +50,14 @@ public class SecurityConfig {
      }
 
      @Bean
-     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory){
+     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
           RedisTemplate<String, Object> template = new RedisTemplate<>();
           template.setConnectionFactory(factory);
           return template;
      }
 
      @Bean
-     public CorsFilter corsFilter(){
+     public CorsFilter corsFilter() {
           UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
           CorsConfiguration config = new CorsConfiguration();
           config.addAllowedOrigin("https://localhost:5173");
@@ -71,26 +71,32 @@ public class SecurityConfig {
      @Bean
      public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
           http.cors(Customizer.withDefaults()).authorizeHttpRequests(configurer -> configurer
-               .requestMatchers(HttpMethod.GET, "/api/ping").permitAll()
-               
-               .requestMatchers(HttpMethod.POST, "/api/user/loginadmin").permitAll()
-               .requestMatchers(HttpMethod.POST, "/api/user/signup").permitAll()
-               .requestMatchers(HttpMethod.POST, "/api/user/login").permitAll()
-               .requestMatchers(HttpMethod.POST, "/api/user/validate").permitAll() //TODO system only
-               .requestMatchers(HttpMethod.POST, "/api/user/logout").hasAnyRole("customer", "admin")
 
-               .requestMatchers(HttpMethod.POST, "/api/product/create").hasRole("admin")
-               .requestMatchers(HttpMethod.GET, "/api/product/view").permitAll()
-               .requestMatchers(HttpMethod.DELETE, "/api/product/delete/**").hasRole("admin")
+                    .requestMatchers("/swagger-ui/**").permitAll()
+                    .requestMatchers("/v3/api-docs/**").permitAll()
+                    .requestMatchers("/api-docs/**").permitAll() // Add this
+                    .requestMatchers("/swagger-ui.html").permitAll()
+                    .requestMatchers("/swagger-resources/**").permitAll()
+                    .requestMatchers("/error").permitAll()
 
-               .requestMatchers(HttpMethod.POST, "/api/order/create").hasRole("customer")
-               .requestMatchers(HttpMethod.POST, "/api/order/view").hasRole("customer")
-               .requestMatchers(HttpMethod.POST, "/api/order/viewall").hasRole("admin")
+                    .requestMatchers(HttpMethod.POST, "/api/user/loginadmin").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/user/signup").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/user/login").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/user/validate").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/user/logout").hasAnyRole("customer", "admin")
+
+                    .requestMatchers(HttpMethod.POST, "/api/product/create").hasRole("admin")
+                    .requestMatchers(HttpMethod.GET, "/api/product/view").permitAll()
+                    .requestMatchers(HttpMethod.DELETE, "/api/product/delete/**").hasRole("admin")
+
+                    .requestMatchers(HttpMethod.POST, "/api/order/create").hasRole("customer")
+                    .requestMatchers(HttpMethod.POST, "/api/order/view").hasRole("customer")
+                    .requestMatchers(HttpMethod.POST, "/api/order/viewall").hasRole("admin")
 
           );
           http.csrf(csrf -> csrf.disable())
-               .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-               .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                    .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
           http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
           return http.build();
      }

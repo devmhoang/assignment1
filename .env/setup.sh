@@ -1,3 +1,6 @@
 #!/bin/bash
 
-# manually setup database if not using docker
+node --version
+
+cd ../frontend; npm i && npm run dev
+

@@ -5,9 +5,9 @@ import { useNavigate } from "react-router-dom"
 
 type RetrievedOrder = {
   orderItems: {
-    id: string,
+    id: number,
     itemname: string,
-    quantitu: number,
+    quantity: number,
     subtotal: number
   }[],
   orderStatus: string,

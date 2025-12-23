@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import demo.backend.config.JwtUtil;
 import demo.backend.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -38,11 +39,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     String path = request.getRequestURI();
     // for public endpoints
     if (path.equals("/api/user/login") ||
-        path.equals("/api/user/signup") || 
+        path.equals("/api/user/signup") ||
         path.equals("/api/user/validate") ||
-        path.equals("/api/product/view") || 
-        path.equals("/api/user/loginadmin") || 
-        path.equals("/api/ping")) {
+        path.equals("/api/product/view") ||
+        path.equals("/api/user/loginadmin") ||
+        path.startsWith("/swagger-ui") ||
+        path.startsWith("/swagger-resources") ||
+        path.startsWith("/api-docs") ||
+        path.startsWith("/v3/api-docs")) {
       logger.info("Bypassing JWT filter for public endpoint: {}", path);
       filterChain.doFilter(request, response);
       return;

@@ -1,5 +1,5 @@
 import axios from "axios"
-import type { Product } from "./store-cart"
+import { useCartStore, type Product } from "./store-cart"
 import { useUserStore } from "./store-user"
 export const API = "https://localhost:8011"
 
@@ -55,11 +55,11 @@ axiosInstance.interceptors.response.use(
                console.error('401 caught Session expired or invalid token');
                // Optional: You can dispatch a custom event for toast notifications
                window.dispatchEvent(new CustomEvent('unauthorized', {
-                    detail: { message: 'Session expired. Please login again.' }
+                    detail: { message: 'JWT expired. Please login again.' }
                }));
-               // Optional: Redirect to login page
-               const { clearUser } = useUserStore.getState();
-               window.location.href = '/';
+               const { clearUser } = useUserStore.getState()
+               const { clearCart } = useCartStore()
+               clearCart()
                clearUser()
 
           }
@@ -81,6 +81,9 @@ export async function createProduct(newProduct: Product) {
                newProduct,
                { withCredentials: true })
           console.log("new product created", res.status, res.data)
+          window.dispatchEvent(new CustomEvent('newproduct', {
+               detail: { message: 'Product Created.' }
+          }));
      } catch (err) { console.log("createProduct failed --07", err) }
 }
 export async function deleteProduct(id: number) {
@@ -89,6 +92,9 @@ export async function deleteProduct(id: number) {
                `${API}/api/product/delete/${id}`,
                { withCredentials: true },)
           console.log("product deleted", res.status, res.data)
+          window.dispatchEvent(new CustomEvent('deleteproduct', {
+               detail: { message: 'Product Deleted.' }
+          }));
      } catch (err) { console.log("ERR delete --05", err) }
 }
 // USER
@@ -98,6 +104,9 @@ export async function signup(username: string, password: string) {
                `${API}/api/user/signup`,
                { username: username, password: password, role: "customer" },
           )
+          window.dispatchEvent(new CustomEvent('newuser', {
+               detail: { message: 'User created. You can login.' }
+          }));
           return res.data
      } catch (err) { throw ("ERR signup--02" + err) }
 }
@@ -110,21 +119,24 @@ export async function login(username: string, password: string) {
                { withCredentials: true }
           )
           console.log('user logged in --', res.data)
+          window.dispatchEvent(new CustomEvent('authorized', {
+               detail: { message: 'JWT created. You can Add Cart and Order.' }
+          }));
           return res.data
      } catch (err) { throw ("ERR --03" + err) }
 }
 
-export async function validate() {
-     try {
-          const res = await axios.post(
-               `${API}/api/user/validate`,
-               {},
-               { withCredentials: true }
-          )
-          console.log('jwt validated and renewed')
-          return res.data
-     } catch (err) { throw ("jwt invalidated --01" + err) }
-}
+// export async function validate() {
+//      try {
+//           const res = await axios.post(
+//                `${API}/api/user/validate`,
+//                {},
+//                { withCredentials: true }
+//           )
+//           console.log('jwt validated and renewed')
+//           return res.data
+//      } catch (err) { throw ("jwt invalidated --01" + err) }
+// }
 
 export async function logout() {
      try {
@@ -145,6 +157,10 @@ export async function createNewOrder(newOrder: Order) {
                newOrder,
                { withCredentials: true })
           console.log("status createNewOrder: ", res.status, res.data)
+
+          window.dispatchEvent(new CustomEvent('neworder', {
+               detail: { message: 'Order created. You can view your order.' }
+          }));
      } catch (err) {
           console.log(err)
      }
@@ -163,12 +179,3 @@ export async function viewAllOrders() {
      } catch (err) { console.log(err) }
 }
 
-// ping
-export async function ping() {
-     try {
-          const res = await axios.get(`${API}/api/ping`)
-          return res.data
-     } catch (err) {
-          console.log("be4 ping failed --", err)
-     }
-}

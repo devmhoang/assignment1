@@ -1,8 +1,8 @@
 -- Insert 3 users (1 admin, 2 customers)
 INSERT INTO demo.users (id, username, password, role) VALUES
-('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'admin_user', 'hashed_password_1', 'admin'),
-('e4eebc99-9c0b-4ef8-bb6d-6bb9bd380a15', 'sarah_jones', 'hashed_password_5', 'customer'),
-('f5eebc99-9c0b-4ef8-bb6d-6bb9bd380a16', 'david_brown', 'hashed_password_6', 'customer');
+('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'admin_user', '$2a$10$TBaflXvIFYDiUFmyN6dyM.OYhIADjykZDz4KTjV8rk.JiY03m7Uhe', 'admin'), -- DEFAULT PASSWORD: abc123
+('e4eebc99-9c0b-4ef8-bb6d-6bb9bd380a15', 'sarah_jones', '$2a$10$TBaflXvIFYDiUFmyN6dyM.OYhIADjykZDz4KTjV8rk.JiY03m7Uhe', 'customer'),
+('f5eebc99-9c0b-4ef8-bb6d-6bb9bd380a16', 'david_brown', '$2a$10$TBaflXvIFYDiUFmyN6dyM.OYhIADjykZDz4KTjV8rk.JiY03m7Uhe', 'customer');
 
 -- Insert 10 products
 INSERT INTO demo.products (id, product_name, product_desc, product_price, product_stock) VALUES
@@ -20,15 +20,23 @@ INSERT INTO demo.products (id, product_name, product_desc, product_price, produc
 SELECT setval('demo.products_id_seq', (SELECT COALESCE(MAX(id), 0) FROM demo.products) + 1, false);
 
 -- Insert 10 orders
-
 INSERT INTO demo.orders (id, order_items, order_status, payment_total, customer_id, order_detail) VALUES
-('a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', '[{"itemid":1, "quantity":2, "subtotal":50000}, {"itemid":3, "quantity":1, "subtotal":35000}]'::jsonb, 'delivered', 85000, 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 'Express shipping requested'),
-('a2eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', '[{"itemid":2, "quantity":3, "subtotal":36000}, {"itemid":5, "quantity":2, "subtotal":56000}, {"itemid":8, "quantity":5, "subtotal":40000}]'::jsonb, 'completed', 132000, 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 'Standard delivery'),
-('a3eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', '[{"itemid":7, "quantity":1, "subtotal":45000}, {"itemid":9, "quantity":2, "subtotal":44000}]'::jsonb, 'shipping', 89000, 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 'Gift wrap requested'),
-('a4eebc99-9c0b-4ef8-bb6d-6bb9bd380a14', '[{"itemid":4, "quantity":4, "subtotal":60000}, {"itemid":6, "quantity":3, "subtotal":54000}, {"itemid":10, "quantity":1, "subtotal":32000}]'::jsonb, 'confirmed', 146000, 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 'Leave at door'),
-('a5eebc99-9c0b-4ef8-bb6d-6bb9bd380a15', '[{"itemid":1, "quantity":5, "subtotal":125000}, {"itemid":2, "quantity":10, "subtotal":120000}]'::jsonb, 'pending', 245000, 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 'Waiting for payment confirmation'),
-('a6eebc99-9c0b-4ef8-bb6d-6bb9bd380a16', '[{"itemid":3, "quantity":2, "subtotal":70000}, {"itemid":7, "quantity":1, "subtotal":45000}]'::jsonb, 'canceled', 115000, 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 'Customer requested cancellation'),
-('a7eebc99-9c0b-4ef8-bb6d-6bb9bd380a17', '[{"itemid":9, "quantity":3, "subtotal":66000}, {"itemid":5, "quantity":1, "subtotal":28000}, {"itemid":4, "quantity":2, "subtotal":30000}]'::jsonb, 'delivered', 124000, 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 'Signature required'),
-('a8eebc99-9c0b-4ef8-bb6d-6bb9bd380a18', '[{"itemid":6, "quantity":4, "subtotal":72000}, {"itemid":8, "quantity":6, "subtotal":48000}]'::jsonb, 'returned', 120000, 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 'Product defect reported'),
-('a9eebc99-9c0b-4ef8-bb6d-6bb9bd380a19', '[{"itemid":10, "quantity":5, "subtotal":160000}, {"itemid":1, "quantity":3, "subtotal":75000}, {"itemid":7, "quantity":2, "subtotal":90000}]'::jsonb, 'completed', 325000, 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 'Bulk order for office supplies'),
-('b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a20', '[{"itemid":2, "quantity":8, "subtotal":96000}, {"itemid":3, "quantity":1, "subtotal":35000}, {"itemid":6, "quantity":2, "subtotal":36000}]'::jsonb, 'refunded', 167000, 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 'Item not as described');
+('a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 
+ '[{"id":1, "itemname":"Wireless Mouse", "quantity":2, "subtotal":50000}, {"id":3, "itemname":"Desk Lamp", "quantity":1, "subtotal":35000}]'::jsonb, 
+ 'delivered', 85000, 'e4eebc99-9c0b-4ef8-bb6d-6bb9bd380a15', 'Express shipping requested'),
+
+('a2eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 
+ '[{"id":2, "itemname":"USB-C Cable", "quantity":3, "subtotal":36000}, {"id":5, "itemname":"Water Bottle", "quantity":2, "subtotal":56000}, {"id":8, "itemname":"Mechanical Pencil", "quantity":5, "subtotal":40000}]'::jsonb, 
+ 'completed', 132000, 'f5eebc99-9c0b-4ef8-bb6d-6bb9bd380a16', 'Standard delivery'),
+
+('a3eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', 
+ '[{"id":7, "itemname":"Bluetooth Speaker", "quantity":1, "subtotal":45000}, {"id":9, "itemname":"Laptop Sleeve", "quantity":2, "subtotal":44000}]'::jsonb, 
+ 'shipping', 89000, 'e4eebc99-9c0b-4ef8-bb6d-6bb9bd380a15', 'Gift wrap requested'),
+
+('a4eebc99-9c0b-4ef8-bb6d-6bb9bd380a14', 
+ '[{"id":4, "itemname":"Notebook Set", "quantity":4, "subtotal":60000}, {"id":6, "itemname":"Phone Stand", "quantity":3, "subtotal":54000}, {"id":10, "itemname":"Desk Organizer", "quantity":1, "subtotal":32000}]'::jsonb, 
+ 'confirmed', 146000, 'f5eebc99-9c0b-4ef8-bb6d-6bb9bd380a16', 'Leave at door'),
+
+('a5eebc99-9c0b-4ef8-bb6d-6bb9bd380a15', 
+ '[{"id":1, "itemname":"Wireless Mouse", "quantity":5, "subtotal":125000}, {"id":2, "itemname":"USB-C Cable", "quantity":10, "subtotal":120000}]'::jsonb, 
+ 'pending', 245000, 'e4eebc99-9c0b-4ef8-bb6d-6bb9bd380a15', 'Waiting for payment confirmation');

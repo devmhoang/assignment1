@@ -4,22 +4,21 @@ import { useCartStore } from '../service/store-cart';
 
 import type { Product } from "../service/store-cart"
 import { useUserStore } from "../service/store-user";
-import { useNavigate } from "react-router-dom";
 
 export default function Product() {
      const [loading, setLoading] = useState(true)
      const [menu, setMenu] = useState<Product[]>([])
      const { addItem } = useCartStore()
-     const { role, username, authenticated } = useUserStore()
-     const navigate = useNavigate()
+     const { role, authenticated } = useUserStore()
 
      const [productName, setProductName] = useState("")
      const [productDesc, setProductDesc] = useState("")
      const [productPrice, setProductPrice] = useState(0)
      const [productStock, setProductStock] = useState(0)
 
-     console.log(username, authenticated, role)
+     // console.log(username, authenticated, role)
      useEffect(() => {
+          
           let cancelled = false;
           async function getMenu() {
                try {
@@ -36,14 +35,16 @@ export default function Product() {
                }
           }
           getMenu();
+          
           return () => { cancelled = true };
-     }, []);
+     }, [loading]);
 
      async function handleDelete(productid: number) {
           try {
                const res = await deleteProduct(productid)
                console.log("product deleted", res)
-               navigate("/")
+               setLoading(true)
+               // navigate("/")
           } catch (err) { console.log(err) }
      }
 
@@ -54,6 +55,8 @@ export default function Product() {
                     id: 0, productName, productDesc, productPrice, productStock
                })
                console.log(res)
+               setLoading(true)
+               // navigate("/")
           } catch (err) { console.log(err) }
      }
 
@@ -98,11 +101,11 @@ export default function Product() {
 
 
                {(role == "admin") &&
-                    <form onSubmit={handleCreate} className="p-5 bg-blue-900 space-y-2">
-                         <input required placeholder="PRODUCT NAME" value={productName} onChange={(e) => setProductName(e.target.value)} /><br />
-                         <input required placeholder="PRODUCT DESCRIPTION" value={productDesc} onChange={(e) => setProductDesc(e.target.value)} /><br />
-                         <input required placeholder="PRODUCT PRICE" value={productPrice} onChange={(e) => setProductPrice(Number(e.target.value))} /><br />
-                         <input required placeholder="PRODUCT STOCK" value={productStock} onChange={(e) => setProductStock(Number(e.target.value))} /><br />
+                    <form onSubmit={handleCreate} className="p-5 bg-blue-900 space-y-2 text-left">
+                         Name: <input required placeholder="PRODUCT NAME" value={productName} onChange={(e) => setProductName(e.target.value)} /><br />
+                         Description: <input required placeholder="PRODUCT DESCRIPTION" value={productDesc} onChange={(e) => setProductDesc(e.target.value)} /><br />
+                         Price: <input required placeholder="PRODUCT PRICE" value={productPrice} onChange={(e) => setProductPrice(Number(e.target.value))} /><br />
+                         Stock: <input required placeholder="PRODUCT STOCK" value={productStock} onChange={(e) => setProductStock(Number(e.target.value))} /><br />
                          <button type="submit">CREATE NEW PRODUCT</button>
                     </form>
                }

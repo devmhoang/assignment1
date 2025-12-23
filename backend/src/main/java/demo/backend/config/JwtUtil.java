@@ -1,4 +1,4 @@
-package demo.backend.security;
+package demo.backend.config;
 
 import java.util.Date;
 
