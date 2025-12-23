@@ -16,22 +16,29 @@ proof of concept submission - Tran Minh Hoang
 
 
 # API Documentation
-[url-swaggerAPI](https://localhost:8011/swagger-ui/index.html#/)
-
-# API Endpoints
 [SwaggerAPI](https://localhost:8011/swagger-ui/index.html#/)
+
 ## USER
 `/api/user/signup` - for User to signup to create a new account
+
 `/api/user/login` - for User to login to create any order
+
 `/api/user/validate` - client calls upon accessing authenticated resources
+
 `/api/user/logout` - upon logging out will clear user and cart states in Client
+
 ## PRODUCT
 `/api/product/create` - for Admin to create products
+
 `/api/product/view` - for everyone to view shop/inventory
+
 `/api/product/delete/{id}` - for Admin to delete a product
+
 ## ORDER
 `/api/order/create` - for User to create order
+
 `/api/order/view` -  for User to view their order history
+
 `/api/order/viewall` -  for Admin to view all orders
 
 # SETUP DEMO
