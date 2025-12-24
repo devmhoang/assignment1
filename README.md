@@ -44,6 +44,7 @@ proof of concept submission - Tran Minh Hoang
 
 # SETUP DEMO
 ## Postgres 17.6  - main database
+- create a separate database for demo. ex: demodb
 - execute schema.sql first, then init.sql
 [schema.sql](./database/schema.sql)
 [init.sql](./database/init.sql)
